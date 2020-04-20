@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "release": "np"
   },
-  "author": "",
+  "author": "oleg_frolov@mail.ru",
   "license": "ISC",
-  "description": "",
+  "description": "Web Basic for NodeJS",
   "dependencies": {
     "diet": "^0.16.0",
     "diet-static": "^2.2.0",
@@ -23,6 +23,19 @@
     "window": "^4.2.7"
   },
   "nodemonConfig": {
-      "ignore": ["database/*"]
-  }  
+    "ignore": [
+      "database/*"
+    ]
+  },
+  "devDependencies": {
+    "np": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aikianapa/wbnode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aikianapa/wbnode/issues"
+  },
+  "homepage": "https://github.com/aikianapa/wbnode#readme"
 }
