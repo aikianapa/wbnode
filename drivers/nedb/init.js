@@ -8,4 +8,5 @@ module.exports = function() {
   this.tableFile = require(__dirname+'/tablefile.js')
   this.tableFlush = require(__dirname+'/tableflush.js')
   this.tableCreate = require(__dirname+'/tablecreate.js')
+  this.tableQuery = require(__dirname+'/tablequery.js')
 }

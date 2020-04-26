@@ -1,0 +1,158 @@
+<div class="modal fade effect-scale" id="modalNewContact" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" data="contactInfo">
+    <div class="modal-content">
+      <div class="modal-body pd-20 pd-sm-30">
+        <button type="button" class="close pos-absolute t-15 r-20" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+        <h5 class="tx-18 tx-sm-20 mg-b-20">Create New Contact</h5>
+        <p class="tx-13 tx-color-03 mg-b-30">You can add more information than what you see here, such as address and birthday by clicking <span class="tx-color-02">Add More Fields</span> button below to bring up more options.</p>
+
+        <div class="d-sm-flex">
+          <div class="mg-sm-r-30">
+            <div class="pos-relative d-inline-block mg-b-20">
+              <div class="avatar avatar-xxl"><span class="avatar-initial rounded-circle bg-gray-700 tx-normal"><i class="icon ion-md-person"></i></span></div>
+              <a href="" class="contact-edit-photo"><i data-feather="edit-2"></i></a>
+            </div>
+          </div><!-- col -->
+          <form class="flex-fill" id="formCreateContact">
+              <meta data-wb="cmd=replace&file=./assets/template/contact-edit.html">
+          </form><!-- col -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="wd-100p d-flex flex-column flex-sm-row justify-content-end">
+          <button type="button" class="btn btn-primary mg-b-5 mg-sm-b-0"
+            data-wb="cmd=save&url=https://api.feedbackcloud.ru/create/users/_new&form=formCreateContact&_signal=newitem&dismiss=modalNewContact&data=appdata.users[_new]&callback=CBformContacts">
+            Сохранить
+          </button>
+          <button type="button" class="btn btn-secondary mg-sm-l-5" data-dismiss="modal">Отмена</button>
+        </div>
+      </div>
+    </div><!-- modal-content -->
+  </div><!-- modal-dialog -->
+</div><!-- modal -->
+
+
+<div class="modal fade effect-scale" id="modalEditContact" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" data="contactInfo">
+    <div class="modal-content">
+      <div class="modal-body pd-20 pd-sm-30">
+        <button type="button" class="close pos-absolute t-15 r-20" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+        <h5 class="tx-18 tx-sm-20 mg-b-20">Пользователь</h5>
+        <p class="tx-13 tx-color-03 mg-b-30">You can add more information than what you see here, such as address and birthday by clicking <span class="tx-color-02">Add More Fields</span> button below to bring up more options.</p>
+
+        <div class="d-sm-flex">
+          <div class="mg-sm-r-30">
+            <div class="pos-relative d-inline-block mg-b-20">
+              <div class="avatar avatar-xxl"><span class="avatar-initial rounded-circle bg-gray-700 tx-normal">A</span></div>
+              <a href="" class="contact-edit-photo"><i data-feather="edit-2"></i></a>
+            </div>
+          </div><!-- col -->
+          <form id="formEditContact" class="flex-fill">
+            <input type="hidden" name="_id" value="${_id}">
+            <input type="hidden" name="_idx" value="${_idx}">
+            <meta data-wb="cmd=replace&file=./assets/template/contact-edit.html">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <div class="wd-100p d-flex flex-column flex-sm-row justify-content-end">
+            <button type="button" class="btn btn-primary mg-b-5 mg-sm-b-0"
+              data-wb="cmd=save&url=https://api.feedbackcloud.ru/update/users/${_id}&form=formEditContact&dismiss=modalEditContact&data=appdata.users[${_idx}]">
+              Сохранить
+            </button>
+            <button type="button" class="btn btn-secondary mg-sm-l-5" data-dismiss="modal">Отмена</button>
+          </div>
+        </div><!-- modal-footer -->
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
+</div>
+
+  <div class="modal fade effect-scale" id="modalDeleteContact" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document" data="contactInfo">
+      <div class="modal-content" >
+        <div class="modal-header">
+          <h6 class="modal-title">Удалить пользователя</h6>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="mg-b-0">Вы действительно хотите удалить пользователя ${first_name} ${last_name}?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-danger"
+            data-ajax="url=https://api.feedbackcloud.ru/remove/users/${_id}&dismiss=modalDeleteContact&_signal=remove&data=appdata.users[${_idx}]&callback=CBformContacts">
+            Удалить
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade effect-scale" id="modalEditGroup" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" data="contactInfo">
+      <div class="modal-content">
+        <div class="modal-body pd-20 pd-sm-30">
+          <button type="button" class="close pos-absolute t-15 r-20" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+          <h5 class="tx-18 tx-sm-20 mg-b-20">Группа</h5>
+          <p class="tx-13 tx-color-03 mg-b-30">Группы пользователей предназначены для разграничения прав доступа в системе.</p>
+
+          <div class="d-sm-flex">
+            <div class="mg-sm-r-30">
+              <div class="pos-relative d-inline-block mg-b-20">
+                <div class="avatar avatar-xxl"><span class="avatar-initial rounded-circle bg-gray-700 tx-normal">A</span></div>
+                <a href="" class="contact-edit-photo"><i data-feather="edit-2"></i></a>
+              </div>
+            </div><!-- col -->
+            <form id="formEditGroup" class="flex-fill">
+              <input type="hidden" name="_id" value="${_id}">
+              <meta data-wb="cmd=replace&file=./assets/template/contact-editgrp.html">
+            </form>
+          </div>
+          <div class="modal-footer">
+            <div class="wd-100p d-flex flex-column flex-sm-row justify-content-end">
+              <button type="button" class="btn btn-primary mg-b-5 mg-sm-b-0"
+                data-wb="cmd=save&url=https://api.feedbackcloud.ru/update/groups/${_id}&form=formEditGroup&dismiss=modalEditGroup&data=appdata.users[${_idx}]">
+                Сохранить
+              </button>
+              <button type="button" class="btn btn-secondary mg-sm-l-5" data-dismiss="modal">Отмена</button>
+            </div>
+          </div><!-- modal-footer -->
+        </div><!-- modal-content -->
+      </div><!-- modal-dialog -->
+    </div><!-- modal -->
+  </div>
+
+  <div class="modal fade effect-scale" id="modalDeleteGroup" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document" data="contactInfo">
+      <div class="modal-content" >
+        <div class="modal-header">
+          <h6 class="modal-title">Удалить группу</h6>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="mg-b-0">Вы действительно хотите удалить группу ${name}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-danger"
+            data-ajax="url=https://api.feedbackcloud.ru/remove/groups/${_id}&dismiss=modalDeleteGroup&_signal=remove&data=appdata.users[${_idx}]&callback=CBformContacts">
+            Удалить
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

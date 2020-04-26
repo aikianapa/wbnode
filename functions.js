@@ -8,6 +8,8 @@ module.exports = function(options) {
       this.readFile = require('./func/readfile'),
       this.writeFile = require('./func/writefile'),
       this.is_exists = require('./func/is_exists'),
+      this.is_file = require('./func/is_file'),
       this.db = require('./drivers/' +options.driver+ '/init')(),
       this.itemInit = require('./func/iteminit')
+      this.md5 = require('./func/md5')
 }

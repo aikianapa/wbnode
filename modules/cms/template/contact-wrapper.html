@@ -1,0 +1,90 @@
+<link rel="stylesheet" href="./assets/css/dashforge.contacts.css">
+<script src="./assets/js/dashforge.contacts.js"></script>
+<script src="./lib/feather-icons/feather.min.js"></script>
+<meta data-wb="cmd=replace&file=./contact-modals.html" />
+<div class="contact-wrapper contact-wrapper-two">
+  <div class="contact-navleft">
+    <nav class="nav flex-column">
+      <a href="#tabContact" class="nav-link active" data-toggle="tab" data-ajax="url=/api/query/users/&bind=users">
+        <span data-toggle="tooltip" title="Пользователи" data-placement="right"><i data-feather="user"></i></span>
+      </a>
+      <a href="#tabGroups" class="nav-link" data-toggle="tab" data-ajax='{
+          "url":"https://api.feedbackcloud.ru/query/groups/",
+          "bind":"appdata.users"
+          }'>
+        <span data-toggle="tooltip" title="Группы" data-placement="right"><i data-feather="users"></i></span>
+      </a>
+      <a href="#tabFavorites" class="nav-link" data-toggle="tab">
+        <span data-toggle="tooltip" title="Избранные" data-placement="right"><i data-feather="star"></i></span>
+      </a>
+      <a href="" class="nav-link">
+        <span data-toggle="tooltip" title="Настройки" data-placement="right"><i data-feather="settings"></i></span>
+      </a>
+      <a href="#modalNewContact" data-bind="bind=contactInfo&data={}" class="btn btn-xs btn-icon btn-primary mt-2" data-toggle="modal">
+        <span data-toggle="tooltip" title="Добавить пользователя"><i data-feather="user"></i></span>
+      </a>
+      <a href="#modalNewGroup" data-bind="bind=contactInfo&data={}" class="btn btn-xs btn-icon btn-primary mt-2" data-toggle="modal">
+        <span data-toggle="tooltip" title="Добавить группу"><i data-feather="users"></i></span>
+      </a>
+    </nav>
+  </div><!-- contact-navleft -->
+
+  <div class="contact-sidebar" id="contactSidebar" data-wb="cmd=include&file=./contact-sidebar.html">
+
+  </div><!-- contact-sidebar -->
+
+  <div class="contact-content">
+    <div class="contact-content-header">
+      <nav class="nav">
+        <a href="#contactInformation" class="nav-link active" data-toggle="tab">Информация</a>
+        <a href="#contactLogs" class="nav-link" data-toggle="tab"><span>Чаты</a>
+      </nav>
+      <a href="" id="contactOptions" class="text-secondary mg-l-auto d-xl-none"><i data-feather="more-horizontal"></i></a>
+    </div><!-- contact-content-header -->
+
+    <div class="contact-content-body">
+      <div class="tab-content">
+
+        <div id="contactInformation" class="tab-pane show active pd-20 pd-xl-25">
+            <meta data-wb="cmd=replace&file=./contact-info.html" />
+        </div>
+        <div id="contactLogs" class="tab-pane pd-20 pd-xl-25">
+          <div class="d-flex align-items-center justify-content-between mg-b-30">
+            <h6 class="tx-15 mg-b-0">Call &amp; Message Logs</h6>
+            <a href="#" class="btn btn-sm btn-white d-flex align-items-center"><i class="icon ion-md-time mg-r-5 tx-16 lh--9"></i> Clear History</a>
+          </div>
+        </div><!-- tab-pane -->
+      </div><!-- tab-content -->
+    </div><!-- contact-content-body -->
+
+    <div class="contact-content-sidebar">
+      <div class="clearfix mg-b-25">
+        <div id="contactAvatar" class="pos-relative float-left">
+          <div class="avatar avatar-xl"><span class="avatar-initial rounded-circle bg-gray-700 tx-normal">A</span></div>
+          <a href="" class="contact-edit-photo" data-toggle="tooltip" title="Upload Photo"><i data-feather="edit-2"></i></a>
+        </div>
+      </div>
+      <h5 id="contactName" class="tx-18 tx-xl-20 mg-b-5">Abigail Johnson</h5>
+      <p class="tx-13 tx-lg-12 tx-xl-13 tx-color-03 mg-b-20">President &amp; CEO - ThemePixels, Inc.</p>
+      <nav class="contact-call-nav mg-b-20">
+        <a href="#" class="nav-call" data-toggle="tooltip" title="Make a Phone Call"><i data-feather="phone"></i></a>
+        <a href="#" class="nav-video" data-toggle="tooltip" title="Make a Video Call"><i data-feather="video"></i></a>
+        <a href="#" class="nav-msg" data-toggle="tooltip" title="Send Message"><i data-feather="message-square"></i></a>
+      </nav><!-- contact-call-nav -->
+
+      <label class="tx-10 tx-medium tx-spacing-1 tx-color-03 tx-uppercase tx-sans mg-b-10">Biography</label>
+      <p class="tx-13 mg-b-0">Gambler, Tea Drinker, Ultimate Piggie, Replacement President of a Major Soft Drink Manufacturer. When I give out candies, I give people the flavour I don't like. </p>
+
+      <hr class="mg-y-20">
+
+      <label class="tx-10 tx-medium tx-spacing-1 tx-color-03 tx-uppercase tx-sans mg-b-15">Options</label>
+      <nav class="nav flex-column contact-content-nav mg-b-25">
+        <a href="" class="nav-link"><i data-feather="share"></i> Share this Contact</a>
+        <a href="" class="nav-link"><i data-feather="star"></i> Add to Favorites</a>
+        <a href="" class="nav-link"><i data-feather="slash"></i> Block this Contact</a>
+      </nav>
+
+    </div><!-- contact-content-sidebar -->
+  </div><!-- contact-content -->
+
+</div><!-- contact-wrapper -->

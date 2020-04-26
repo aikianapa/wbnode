@@ -2,46 +2,59 @@ const Sugar = require('sugar')
 const Mustache = require('mustache')
 const Window = require('window');
 const Express = require('express')
+const BodyParser = require('body-parser');
+const Path = require('path');
 const session = require('express-session')
 const app = Express()
 const pathToRegexp = require('path-to-regexp')
+const mime = require('mime')
+const fs = require('fs')
 const window = new Window();
 const $ = require('jquery')(window);
 const jq = window.document.createElement(':root');
 require('./functions')({driver:'nedb'}) // подключаем функции
 
 app.set('trust proxy', 1) // trust first proxy
+app.use(BodyParser.urlencoded({extended: true}));
+app.use(BodyParser.json());
 app.use(session({
-  secret: 'keyboard cat',
+  secret: 'Web Basic Engine',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true }
 }))
 
+var path_app = app.settings.views.split("/")
+path_app.pop()
+path_app = path_app.join("/");
+
 var routes = {}
+var modules = {}
 var wbdef = {
     controller: "form",
     mode: "show",
     table: "pages",
     item: "home",
-    tpl: "default.html",
+    tpl: "index.html",
 }
 var params = {
-    start: "./index.html"
+    start: false,
+    path_app: path_app,
+    path_wbn: __dirname,
 }
 
-var listen = function(port = 5000, options = {}) {
-
+var listen = function(port = 80, options = {}) {
+  params.port = port
 
   app.listen(port, function () {
-    console.log('Example app listening on port 3000!');
+    console.log(`App listening on port ${port}!`);
   });
   //var static = require('diet-static')({ path: app.path+params.static })
   //app.footer(static);
 
   // Attach static as a global footer
 
-  if (options.start) params.startPage = options.start
+  if (options.start) params.start = options.start
 
   app.get('*', function(req,res) {
       return worker(req)
@@ -51,20 +64,22 @@ var listen = function(port = 5000, options = {}) {
       return worker(req)
   });
 
-  function worker(req) {
-      req._data = {
+  function worker(request) {
+      request._data = {
             _unique: function() {return newId()},
             _post: {},
             _get: {},
             _item: {}
       };
-      //req.wbn = wbn
-      //req.$jq = $(jq)
-      req.route = getRoute(req)
-      result = req.res
-      result.request = req
+      wbn.route = getRoute(request)
+      request.route = wbn.route
+      request.wbn = wbn
+      request.$jq = $(jq)
+      result = request.res
+      result.request = request
       result.wbn = wbn
       result.$jq = $(jq)
+
       result.html = function(html) {
           result.header("Content-Type","text/html")
           result.end(html)
@@ -73,11 +88,37 @@ var listen = function(port = 5000, options = {}) {
           result.header("Content-Type","application/json")
           result.end(html)
       }
-      console.log("Trigger: route-"+req.route.routeName);
-      $(jq).trigger("route-"+req.route.routeName,req)
-      if (req.route.controller) {
-          var controller = require("./controllers/"+req.route.controller)
-          controller(result)
+
+      if (wbn.route.filename) {
+        wbn.route.filename = Path.normalize(wbn.route.filename)
+        // здесь нужно добавить возможность отдавать 404 ошибку для закрытых настройками безопасности файлов
+
+
+          if (wbn.route.ext == ".html" || wbn.route.ext == ".htm" || wbn.route.ext == ".tpl") {
+            let tpl = fromFile(wbn.route.filename)
+            tpl.fetch()
+            result.html(tpl.html())
+          } else {
+            let file = fs.readFileSync(wbn.route.filename);
+            result.header("Content-Type",mime.lookup(wbn.route.filename))
+            result.header("Content-Length",wbn.route.size)
+            result.end(file)
+          }
+          return
+      }
+
+      if (request.route.routeName !== undefined) {
+          console.log(`Trigger: route-${request.route.routeName}`);
+          $(jq).trigger("route-"+request.route.routeName,request)
+      }
+      if (request.route.controller) {
+          var controller = require(`./controllers/${request.route.controller}`)
+          if ($.isFunction(controller)) {
+            controller(request, result)
+          } else {
+            result.status(404);
+            result.end("Error 404");
+          }
       } else {
         result.status(404);
         result.end("Error 404");
@@ -119,18 +160,36 @@ var getRoute = function(req) {
     separator: '.'
   });
   route = {
-       protocol: req._parsedUrl.protocol
-      ,port: req._parsedUrl.port
+       protocol: req.protocol
+      ,port: params.port
+      ,method: req.method
       ,href: req._parsedUrl.href
-      ,host: req._parsedUrl.host
-      ,hostname: req._parsedUrl.hostname
+      ,hostname: req.hostname
       ,path: req._parsedUrl.pathname
-      ,path_app: req.app.path
+      ,path_app: wbn.params.path_app
+      ,path_wbn: wbn.params.path_wbn
       ,queryString: req._parsedUrl.query
+      ,query: req.query
       ,url: req.originalUrl
+      ,sessid: req.sessionID
+      ,host: `${req.protocol}://${req.hostname}`
   }
+  if (route.port > "" && route.port !== 80) route.host += ":" + route.port
   route.params = route.path.split('/')
   route.params.splice(0, 1);
+  if (route.method == 'POST') route._post = req.body
+  if (route.method == 'GET') route._get = route.query
+
+  let filename = route.path_app + route.path
+  if (is_file(filename)) {
+      let stat = fs.statSync(filename);
+      route.filename = filename
+      route.mime = mime.lookup(filename)
+      route.size = stat.size
+      route.ext = Path.extname(filename)
+      return route
+  }
+
   let finded = false;
   $.each(routes,function(i,pattern){
       if (finded == false) {
@@ -157,7 +216,6 @@ var getRoute = function(req) {
         }
   })
   if (finded && !route.controller) route.controller = wbdef.controller
-//  console.log(route)
   return route;
 }
 
@@ -167,10 +225,7 @@ var objLength = function(obj){
 
 var fromFile = function(file) {
   let string = readFile(file);
-  if (string.errno) {
-    string = {Error: string}
-    return string;
-  }
+  if (string.errno) console.log(string);
   return fromString(string);
 }
 
@@ -188,6 +243,8 @@ var normalizepath = function(pathname) {
       .normalize()
   );
 }
+
+
 
 $.fn.fetch = function(data = undefined) {
     if (data == undefined) data = $(this).data("data");
@@ -207,7 +264,7 @@ $.fn.fetch = function(data = undefined) {
     return $(this).setData(data);
 }
 
-$.fn.fetchNode = function() {
+$.fn.fetchNode = function(data) {
     params = $(this).parseAttr();
     if (!params.cmd) return;
     let func = "cmd_" + params.cmd;
@@ -231,7 +288,7 @@ $.fn.setData = function(data) {
 
 $.fn.setValuesStr = function(data={}) {
   var outer = $(this).outerHTML();
-  if (strpos(outer,"}}")) {
+  if (outer && strpos(outer,"}}")) {
       $.each(data,function(key,val){
           data[key] = val;
       })
@@ -254,23 +311,14 @@ $.fn.hasAttr = function(attr) {
   return res;
 }
 
-$.fn.cmd_replace = function(){
-    let params = $(this).data("wb-params");
-    let repl = readFile(params.file);
-    $(this).replaceWith($(repl).fetch());
-}
-
-$.fn.cmd_include = function(){
-    let params = $(this).data("wb-params");
-    let repl = readFile(params.file);
-    $(this).html(repl);
-}
-
-$.fn.cmd_save = function(){
-    let params = $(this).data("wb-params");
-    if (params.event == undefined) params.event = "onclick"
-    let callback = "wbapp.save(" + JSON.stringify(params) + ",this)"
-    $(this).attr(params.event,callback)
+$.fn.base = function(path) {
+    $.basepath = path
+    var base = `<base href="${path}" />`
+    if ($(this).find("head").length) {
+        $(this).find("head").prepend(base)
+    } else {
+        $(this).prepend(base)
+    }
 }
 
 $.fn.parseAttr = function(queryString = null) {
@@ -285,9 +333,6 @@ $.fn.parseAttr = function(queryString = null) {
     $(this).data("wb-params",params);
     return params;
 }
-
-
-
 
 $.fn.setValues = function(data) {
     // Выяснить, мы получаем шаблон или нам нужно его загрузить
@@ -322,7 +367,6 @@ $.fn.setValues = function(data) {
   };
 
 var wbn = {
-  Wbn: this,
   listen: listen,
   fromFile: fromFile,
   fromString: fromString,
@@ -331,7 +375,12 @@ var wbn = {
   addRoute: addRoute,
   getRoute: getRoute,
   routes: routes,
-  params: params
+  params: params,
+  modules: modules,
+  jq: jq,
+  $: $
 };
 
-module.exports = wbn
+require('./cmd/init.js')(wbn)
+require('./wbroute')(wbn);
+module.exports = wbn;
